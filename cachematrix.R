@@ -9,8 +9,40 @@ emptyTheWorkspace<- function() {
 }
 ############################################################################
 createMatrix <- function() {
-      mtxBasic <-  matrix(c(2, 4, 6, 8),  nrow=2,  ncol=2) 
+      mtxBasic <-  matrix(c(2, 4, 5, 8),  nrow=2,  ncol=2) 
       return(mtxBasic)
+}
+createVector <- function() {
+      vBasic <-  c(2,4,6,8)
+      return(vBasic)
+}
+##############################################################################################
+##  This function creates a special "list" object 
+##  that calculate mean
+##############################################################################################
+makeVector <- function(x = numeric()) {
+      m <- NULL
+      set <- function(y) {
+            x <<- y
+            m <<- NULL
+      }
+      get <- function() x
+      setmean <- function(mean) m <<- mean
+      getmean <- function() m
+      list(set = set, get = get,
+           setmean = setmean,
+           getmean = getmean)
+}
+cachemean <- function(x, ...) {
+      m <- x$getmean()
+      if(!is.null(m)) {
+            message("getting cached data")
+            return(m)
+      }
+      data <- x$get()
+      m <- mean(data, ...)
+      x$setmean(m)
+      m
 }
 ##############################################################################################
 ##  This function creates a special "matrix" object 
@@ -23,7 +55,7 @@ makeCacheMatrix <- function(x = matrix()) {
             m <<- NULL
       }
       get <- function() x
-      setinverse <- function(mean) m <<- solve
+      setinverse <- function(solve) m <<- solve
       getinverse <- function() m
       list(set = set, get = get,
            setinverse = setinverse,
@@ -40,7 +72,7 @@ cacheSolve <- function(x, ...) {
             message("getting cached data")
             return(m)
       }
-      message("calculating inverse now")
+      # message("calculating inverse now")
       data <- x$get()
       m <- solve(data, ...)
       x$setinverse(m)
